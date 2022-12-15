@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "face-cartoniztion"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+packages = [{include = "face_cartoniztion"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+scikit-image = "^0.19.3"
+opencv-python = "^4.6.0.66"
+matplotlib = "^3.6.2"
+numpy = "^1.23.5"
+imageio = {extras = ["pyav"], version = "^2.22.4"}
+
+
+[tool.poetry.group.dev.dependencies]
+ipykernel = "^6.19.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
