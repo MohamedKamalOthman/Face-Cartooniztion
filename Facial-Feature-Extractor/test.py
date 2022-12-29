@@ -33,7 +33,7 @@ if __name__ == "__main__":
     print("\nStarted testing...")
     for i in range(data_size):
         try:
-            img = cv2.imread(f'./face-test-set/{i+100}.jpg')
+            img = cv2.imread(f'./face-training-set/ ({i+100}).jpg')
             img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
             faces = face_cascade.detectMultiScale(img, 1.3, 5)
             (y, x, h, w) = faces[0]
