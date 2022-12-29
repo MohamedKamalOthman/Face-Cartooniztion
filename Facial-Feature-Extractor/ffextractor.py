@@ -6,8 +6,10 @@ import numpy as np
 import scipy.fft as fft
 from progress.bar import Bar
 
+# Facial Feature Extractor
 
-class eyelocator:
+
+class FeaturesLocator:
     def __init__(self, load=False, path="./") -> None:
         if load:
             self.load(path)
@@ -97,11 +99,11 @@ class eyelocator:
             except:
                 skipped += 1
                 continue
-        # were you trying to normalize the fft? @Abdulhady
-        self.left_eye_asef / taken
-        self.right_eye_asef / taken
-        self.nose_asef / taken
-        self.mouth_asef / taken
+        # Normalize fft
+        self.left_eye_asef /= taken
+        self.right_eye_asef /= taken
+        self.nose_asef /= taken
+        self.mouth_asef /= taken
         print(f'Finished training, taken = {taken}, skipped = {skipped}')
 
     def gauss(self, x, y, sigma=4.0):
@@ -112,8 +114,9 @@ class eyelocator:
             (128, 128),
         )
 
-    def findeye(self, image):
+    def findfeatures(self, image):
         # img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        scale = [image.shape[0] / 128, image.shape[1] / 128]
         img = cv2.resize(image, [128, 128])
         img_f = fft.fft2(img)
         # detection
@@ -121,13 +124,15 @@ class eyelocator:
         right_eye_img = fft.ifft2(img_f * self.right_eye_asef)
         nose_img = fft.ifft2(img_f * self.nose_asef)
         mouth_img = fft.ifft2(img_f * self.mouth_asef)
-        x1, y1 = np.unravel_index(left_eye_img.argmax(), left_eye_img.shape)
-        x2, y2 = np.unravel_index(right_eye_img.argmax(), right_eye_img.shape)
-        x3, y3 = np.unravel_index(nose_img.argmax(), nose_img.shape)
-        x4, y4 = np.unravel_index(
-            mouth_img.argmax(), mouth_img.shape)
-        cv2.ellipse(img, (x1, y1), (9, 4), 0, 0, 360, color=255, thickness=1)
-        cv2.ellipse(img, (x2, y2), (9, 4), 0, 0, 360, color=255, thickness=1)
-        cv2.ellipse(img, (x3, y3), (9, 4), 0, 0, 360, color=255, thickness=1)
-        cv2.ellipse(img, (x4, y4), (9, 4), 0, 0, 360, color=255, thickness=1)
-        return img
+        left_eye = np.multiply(np.unravel_index(
+            left_eye_img.argmax(), left_eye_img.shape), scale).astype(np.uint32)
+        right_eye = np.multiply(np.unravel_index(
+            right_eye_img.argmax(), right_eye_img.shape), scale).astype(np.uint32)
+        nose = np.multiply(np.unravel_index(
+            nose_img.argmax(), left_eye_img.shape), scale).astype(np.uint32)
+        mouth = np.multiply(np.unravel_index(
+            mouth_img.argmax(), mouth_img.shape), scale).astype(np.uint32)
+        return {'left_eye': left_eye,
+                'right_eye': right_eye,
+                'nose': nose,
+                'mouth': mouth}

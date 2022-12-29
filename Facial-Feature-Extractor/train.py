@@ -1,11 +1,11 @@
 import cv2
 import numpy as np
-from eyeloc import eyelocator
+from ffextractor import FeaturesLocator
 from lazyarray import LazyArray
 
 if __name__ == "__main__":
-    locator = eyelocator()
-    data_size = 1700
+    locator = FeaturesLocator()
+    data_size = 1491
     lazy_images = LazyArray(
         lambda i: cv2.imread(f'./face-training-set/ ({i+1}).jpg'), data_size
     )
