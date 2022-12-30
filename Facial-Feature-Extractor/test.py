@@ -11,7 +11,7 @@ def distance(x1, y1, x2, y2):
 
 if __name__ == "__main__":
     locator = FeaturesLocator(load=True, path="./results")
-    data_size = 500
+    data_size = 2000
     left_eye_correct = 0
     right_eye_correct = 0
     nose_correct = 0
@@ -26,7 +26,9 @@ if __name__ == "__main__":
         cv2.data.haarcascades + 'haarcascade_frontalface_default.xml'
     )
     print("\nStarted testing...")
-    bar = Bar()
+    bar = Bar('Testing Images',
+              max = data_size,
+              suffix ='%(percent)d%% - %(elapsed_td)s - %(eta_td)s',)
     for i in bar.iter(range(data_size)):
         try:
             img = cv2.imread(f'./face-testing-set/{i+100}.jpg')
