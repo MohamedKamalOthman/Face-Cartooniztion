@@ -1,6 +1,7 @@
 */face-cleaning-set
 */face-testing-set
 */face-training-set
+*/face-training-extended-set
 */face-data-set
 *.pyc
 */__pycache__
