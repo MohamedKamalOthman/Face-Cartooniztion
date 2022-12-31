@@ -4,14 +4,12 @@ from ffextractor import FeaturesLocator
 from progress.bar import Bar
 
 
-def distance(x1, y1, x2, y2):
-    # distance smaller than 20 pixels
-    return ((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)) < (20 * 20)
-
-
-if __name__ == "__main__":
+def test(max_distance=20):
+    distance = lambda x1, y1, x2, y2: (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2) < (
+        max_distance * max_distance
+    )
     locator = FeaturesLocator(load=True, path="./results")
-    data_size = 2000
+    data_size = 500
     left_eye_correct = 0
     right_eye_correct = 0
     nose_correct = 0
@@ -26,12 +24,14 @@ if __name__ == "__main__":
         cv2.data.haarcascades + 'haarcascade_frontalface_default.xml'
     )
     print("\nStarted testing...")
-    bar = Bar('Testing Images',
-              max = data_size,
-              suffix ='%(percent)d%% - %(elapsed_td)s - %(eta_td)s',)
+    bar = Bar(
+        'Testing Images',
+        max=data_size,
+        suffix='%(percent)d%% - %(elapsed_td)s - %(eta_td)s',
+    )
     for i in bar.iter(range(data_size)):
         try:
-            img = cv2.imread(f'./face-testing-set/{i+100}.jpg')
+            img = cv2.imread(f'./face-testing-set/{i+1}.jpg')
             img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
             faces = face_cascade.detectMultiScale(img, 1.3, 5)
             (y, x, h, w) = faces[0]
@@ -84,3 +84,9 @@ if __name__ == "__main__":
     print(f"Mouth accuracy: {mouth_correct*100.0/(mouth_correct+mouth_false)}%")
 
     print(f"correct: {mouth_correct}, false: {mouth_false}")
+
+    return left_eye_correct, left_eye_false
+
+
+if __name__ == "__main__":
+    test()
