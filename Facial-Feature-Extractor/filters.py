@@ -27,7 +27,7 @@ def check_nose(keypoint, w, h):
 
 def check_mouth(keypoint, w, h):
     x, y = keypoint
-    return 1.25 * w // 4 < x and x < 2.75 * w // 4 and h // 2 < y and y < 9 * h // 10
+    return w // 4 < x and x < 3 * w // 4 and h // 2 < y and y < 9 * h // 10
 
 
 def angle_transform(pair, angle):
@@ -193,7 +193,7 @@ def render_filter_1(img):
         return img
     glasses = cv2.imread("./filters/glasses.png", cv2.IMREAD_UNCHANGED)
     (y, x, h, w) = faces[0]
-    glasses = cv2.resize(glasses, (np.array([w, h]) * 0.75).astype(int))
+    glasses = cv2.resize(glasses, (np.array([w, h]) * 0.8).astype(int))
     face = img_grey[x : x + w, y : y + h]
     keypoints = enhance_keypoints(face, w, h)
     if keypoints["left_eye"] is None or keypoints["right_eye"] is None:
@@ -212,7 +212,7 @@ def render_filter_2(img):
     wig = cv2.imread("./filters/clown_wig.png", cv2.IMREAD_UNCHANGED)
     (y, x, h, w) = faces[0]
     nose = cv2.resize(nose, (np.array([w, h]) * 0.30).astype(int))
-    wig = cv2.resize(wig, (np.array([w, h]) * 0.95).astype(int))
+    wig = cv2.resize(wig, (np.array([w, h]) * 1.25).astype(int))
     face = img_grey[x : x + w, y : y + h]
     keypoints = enhance_keypoints(face, w, h)
     if (

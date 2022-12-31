@@ -21,17 +21,17 @@ def test(max_distance=20):
     detector = dlib.get_frontal_face_detector()
     predictor = dlib.shape_predictor("./shape_predictor_68_face_landmarks.dat")
     face_cascade = cv2.CascadeClassifier(
-        cv2.data.haarcascades + 'haarcascade_frontalface_default.xml'
+        cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
     )
     print("\nStarted testing...")
     bar = Bar(
-        'Testing Images',
+        "Testing Images",
         max=data_size,
-        suffix='%(percent)d%% - %(elapsed_td)s - %(eta_td)s',
+        suffix="%(percent)d%% - %(elapsed_td)s - %(eta_td)s",
     )
     for i in bar.iter(range(data_size)):
         try:
-            img = cv2.imread(f'./face-testing-set/{i+1}.jpg')
+            img = cv2.imread(f"./face-testing-set/{i+4000}.jpg")
             img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
             faces = face_cascade.detectMultiScale(img, 1.3, 5)
             (y, x, h, w) = faces[0]
@@ -53,19 +53,19 @@ def test(max_distance=20):
             x4, y4 = (shape.part(54).x + shape.part(48).x) // 2, (
                 shape.part(54).y + shape.part(48).y
             ) // 2
-            if distance(features['left_eye'][0], features['left_eye'][1], x1, y1):
+            if distance(features["left_eye"][0], features["left_eye"][1], x1, y1):
                 left_eye_correct += 1
             else:
                 left_eye_false += 1
-            if distance(features['right_eye'][0], features['right_eye'][1], x2, y2):
+            if distance(features["right_eye"][0], features["right_eye"][1], x2, y2):
                 right_eye_correct += 1
             else:
                 right_eye_false += 1
-            if distance(features['nose'][0], features['nose'][1], x3, y3):
+            if distance(features["nose"][0], features["nose"][1], x3, y3):
                 nose_correct += 1
             else:
                 nose_false += 1
-            if distance(features['mouth'][0], features['mouth'][1], x4, y4):
+            if distance(features["mouth"][0], features["mouth"][1], x4, y4):
                 mouth_correct += 1
             else:
                 mouth_false += 1
