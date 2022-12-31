@@ -1,7 +1,8 @@
 from tkinter import *
-from PIL import ImageTk, Image
+
 import cv2
 from filters import *
+from PIL import Image, ImageTk
 
 root = Tk()
 # Create a frame

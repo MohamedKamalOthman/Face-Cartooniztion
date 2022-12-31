@@ -1,4 +1,6 @@
 class LazyArray:
+    """Iterable array with generating function"""
+
     def __init__(self, gen, size) -> None:
         self.index = 0
         self.size = size

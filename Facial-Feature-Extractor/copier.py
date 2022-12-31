@@ -1,6 +1,6 @@
-import cv2
 import shutil
 
+# copy files in subdirectories to a single parent directory
 if __name__ == "__main__":
     k = 0
     for i in range(1679):

@@ -1,36 +1,46 @@
-import cv2
-from ffextractor import FeaturesLocator
-import numpy as np
-import imutils
 from collections import defaultdict
 
+import cv2
+import imutils
+import numpy as np
+from ffextractor import FeaturesLocator
+from skimage.draw import ellipse
+
+# global locator object
 locator = FeaturesLocator(load=True, path="./results")
+
+# face haarcascade
 face_cascade = cv2.CascadeClassifier(
     cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
 )
 
 
 def check_left_eye(keypoint, w, h):
+    """Check if left eye is in a reasonable location in image"""
     x, y = keypoint
     return 0 < x and x < w // 2 and 2 * h // 7 < y and y < 4 * h // 7
 
 
 def check_right_eye(keypoint, w, h):
+    """Check if right eye is in a reasonable location in image"""
     x, y = keypoint
     return w // 2 < x and x < w and 2 * h // 7 < y and y < 4 * h // 7
 
 
 def check_nose(keypoint, w, h):
+    """Check if nose is in a reasonable location in image"""
     x, y = keypoint
     return w // 4 < x and x < 3 * w // 4 and 3 * h // 7 < y and y < 6 * h // 7
 
 
 def check_mouth(keypoint, w, h):
+    """Check if mouth is in a reasonable location in image"""
     x, y = keypoint
     return w // 4 < x and x < 3 * w // 4 and h // 2 < y and y < 9 * h // 10
 
 
 def angle_transform(pair, angle):
+    """Transform a point(x, y) to a new point rotated by an angle"""
     x = pair[0] * np.cos(angle * np.pi / 180) - pair[1] * np.sin(angle * np.pi / 180)
     y = pair[0] * np.sin(angle * np.pi / 180) + pair[1] * np.cos(angle * np.pi / 180)
     pair[0] = x
@@ -39,16 +49,24 @@ def angle_transform(pair, angle):
 
 
 def enhance_keypoints(face, w, h):
+    """
+    Get enhanced keypoints from face.
+    The resulting keypoints are the median of multiple rotations of the face
+    with outliers eliminated
+    """
     all_keypoints = []
+    # list of rotations
     rots = [352, 354, 356, 358, 0, 2, 4, 6, 8]
     for rot in rots:
         face_rotated = imutils.rotate(face, rot)
         keypoints = locator.findfeatures(face_rotated)
         for k, v in keypoints.items():
+            # get keypoint in the original coordinate system
             keypoints[k] = angle_transform(v, -rot)
 
         all_keypoints.append(keypoints)
 
+    # Get median of all keypoint features
     keypoints = {"left_eye": None, "right_eye": None, "nose": None, "mouth": None}
     arr = [x["left_eye"] for x in all_keypoints if check_left_eye(x["left_eye"], w, h)]
     if len(arr) > 0:
@@ -74,6 +92,7 @@ def enhance_keypoints(face, w, h):
 
 
 def add_transparent_image(background, foreground, x_offset=None, y_offset=None):
+    """Overlay foregorund image onto background. Foreground image must have alpha channel"""
     bg_h, bg_w, bg_channels = background.shape
     fg_h, fg_w, fg_channels = foreground.shape
 
@@ -123,6 +142,7 @@ def add_transparent_image(background, foreground, x_offset=None, y_offset=None):
 
 
 def render_filter_0(img, dp=None):
+    """Render facial features"""
     img_grey = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     faces = face_cascade.detectMultiScale(img_grey, 1.3, 5)
     if len(faces) == 0:
@@ -190,6 +210,7 @@ def render_filter_0(img, dp=None):
 
 
 def render_filter_1(img, dp=None):
+    """Render glasses"""
     img_grey = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     faces = face_cascade.detectMultiScale(img_grey, 1.3, 5)
     if len(faces) == 0:
@@ -210,6 +231,7 @@ def render_filter_1(img, dp=None):
 
 
 def render_filter_2(img, dp=None):
+    """Render clown face"""
     img_grey = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     faces = face_cascade.detectMultiScale(img_grey, 1.3, 5)
     if len(faces) == 0:
@@ -238,6 +260,7 @@ def render_filter_2(img, dp=None):
 
 
 def render_filter_3(img, dp=None):
+    """Render face mask"""
     img_grey = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     faces = face_cascade.detectMultiScale(img_grey, 1.3, 5)
     if len(faces) == 0:
@@ -301,7 +324,6 @@ def cartoonize(img):
             bi, d=5, sigmaColor=9, sigmaSpace=7
         )  # bilateral filter
 
-    # img_edge = cv2.Canny(bi, 100, 200)
     img_cartoon = np.array(bi)
     img_gray = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
     img_blur = cv2.medianBlur(img_gray, 3)
@@ -345,6 +367,13 @@ def cartoonize(img):
     # Get the contours and draw it on cartonized version
     contours, _ = cv2.findContours(img_edge, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
     cv2.drawContours(img_cartoon, contours, -1, 0, thickness=1)
+    rr, cc = ellipse(
+        w // 2,
+        h // 2,
+        1.2 * img_cartoon.shape[1] // 2,
+        0.8 * img_cartoon.shape[0] // 2,
+        img_cartoon.shape,
+    )
 
-    img[ox : ox + w, oy : oy + h] = img_cartoon
+    img[(rr + ox), (cc + oy), :] = img_cartoon[rr, cc, :]
     return img
