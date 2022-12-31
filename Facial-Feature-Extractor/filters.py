@@ -122,11 +122,11 @@ def add_transparent_image(background, foreground, x_offset=None, y_offset=None):
     background[bg_y : bg_y + h, bg_x : bg_x + w] = composite
 
 
-def render_filter_0(img):
+def render_filter_0(img, dp=None):
     img_grey = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     faces = face_cascade.detectMultiScale(img_grey, 1.3, 5)
     if len(faces) == 0:
-        return img
+        return img, dp
 
     (y, x, h, w) = faces[0]
     face = img_grey[x : x + w, y : y + h]
@@ -138,7 +138,10 @@ def render_filter_0(img):
         or keypoints["nose"] is None
         or keypoints["mouth"] is None
     ):
-        return img
+        if dp is None:
+            return img, None
+        else:
+            keypoints = dp
     xwidth = int(9 * img.shape[0] / 350)
     ywidth = int(4 * img.shape[1] / 350)
     thickness = (img.shape[0] * img.shape[1]) // 200000
@@ -183,31 +186,34 @@ def render_filter_0(img):
         thickness=thickness,
     )
     cv2.rectangle(img, (y, x), (y + h, x + w), (0, 0, 255), 2)
-    return img
+    return img, keypoints
 
 
-def render_filter_1(img):
+def render_filter_1(img, dp=None):
     img_grey = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     faces = face_cascade.detectMultiScale(img_grey, 1.3, 5)
     if len(faces) == 0:
-        return img
+        return img, dp
     glasses = cv2.imread("./filters/glasses.png", cv2.IMREAD_UNCHANGED)
     (y, x, h, w) = faces[0]
     glasses = cv2.resize(glasses, (np.array([w, h]) * 0.8).astype(int))
     face = img_grey[x : x + w, y : y + h]
     keypoints = enhance_keypoints(face, w, h)
     if keypoints["left_eye"] is None or keypoints["right_eye"] is None:
-        return img
+        if dp is None:
+            return img, None
+        else:
+            keypoints = dp
     center = (keypoints["left_eye"] + keypoints["right_eye"]) // 2
     add_transparent_image(img, glasses, center[0] + y, center[1] + x)
-    return img
+    return img, keypoints
 
 
-def render_filter_2(img):
+def render_filter_2(img, dp=None):
     img_grey = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     faces = face_cascade.detectMultiScale(img_grey, 1.3, 5)
     if len(faces) == 0:
-        return img
+        return img, dp
     nose = cv2.imread("./filters/clown_nose.png", cv2.IMREAD_UNCHANGED)
     wig = cv2.imread("./filters/clown_wig.png", cv2.IMREAD_UNCHANGED)
     (y, x, h, w) = faces[0]
@@ -220,29 +226,35 @@ def render_filter_2(img):
         or keypoints["right_eye"] is None
         or keypoints["nose"] is None
     ):
-        return img
+        if dp is None:
+            return img, None
+        else:
+            keypoints = dp
     center_nose = keypoints["nose"]
     center_wig = (keypoints["left_eye"] + keypoints["right_eye"]) // 2
     add_transparent_image(img, nose, center_nose[0] + y, center_nose[1] + x)
     add_transparent_image(img, wig, center_wig[0] + y, center_wig[1] + x - h // 3)
-    return img
+    return img, keypoints
 
 
-def render_filter_3(img):
+def render_filter_3(img, dp=None):
     img_grey = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     faces = face_cascade.detectMultiScale(img_grey, 1.3, 5)
     if len(faces) == 0:
-        return img
+        return img, dp
     mask = cv2.imread("./filters/mask.png", cv2.IMREAD_UNCHANGED)
     (y, x, h, w) = faces[0]
     mask = cv2.resize(mask, (np.array([w, h]) * 0.90).astype(int))
     face = img_grey[x : x + w, y : y + h]
     keypoints = enhance_keypoints(face, w, h)
     if keypoints["mouth"] is None:
-        return img
+        if dp is None:
+            return img, None
+        else:
+            keypoints = dp
     center = keypoints["mouth"]
     add_transparent_image(img, mask, center[0] + y, center[1] + x)
-    return img
+    return img, keypoints
 
 
 def K_means(hist, No_of_groups=10):

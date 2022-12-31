@@ -50,19 +50,31 @@ def main():
     filter_3.grid(row=0, column=5, padx=4)
     filter_3 = Button(app, text="Cartoonify", fg="green", command=filter_num4)
     filter_3.grid(row=0, column=6, padx=4)
+    dp = None
+    prev = -1
 
     def video_stream():
+        nonlocal dp, prev
         _, frame = cap.read()
         if filters == 0:
-            frame = render_filter_0(frame)
+            if prev != filters:
+                dp = None
+            frame, dp = render_filter_0(frame, dp)
         elif filters == 1:
-            frame = render_filter_1(frame)
+            if prev != filters:
+                dp = None
+            frame, dp = render_filter_1(frame, dp)
         elif filters == 2:
-            frame = render_filter_2(frame)
+            if prev != filters:
+                dp = None
+            frame, dp = render_filter_2(frame, dp)
         elif filters == 3:
-            frame = render_filter_3(frame)
+            if prev != filters:
+                dp = None
+            frame, dp = render_filter_3(frame, dp)
         elif filters == 4:
             frame = cartoonize(frame)
+        prev = filters
         cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
         img = Image.fromarray(cv2image)
         imgtk = ImageTk.PhotoImage(image=img)
