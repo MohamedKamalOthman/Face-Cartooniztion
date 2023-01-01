@@ -16,31 +16,55 @@ face_cascade = cv2.CascadeClassifier(
 
 
 def check_left_eye(keypoint, w, h):
-    """Check if left eye is in a reasonable location in image"""
+    """
+    Check if left eye is in a reasonable location in image
+    keypoint: features location
+    w: frame width
+    h: frame hight
+    """
     x, y = keypoint
     return 0 < x and x < w // 2 and 2 * h // 7 < y and y < 4 * h // 7
 
 
 def check_right_eye(keypoint, w, h):
-    """Check if right eye is in a reasonable location in image"""
+    """
+    Check if right eye is in a reasonable location in image
+    keypoint: features location
+    w: frame width
+    h: frame hight
+    """
     x, y = keypoint
     return w // 2 < x and x < w and 2 * h // 7 < y and y < 4 * h // 7
 
 
 def check_nose(keypoint, w, h):
-    """Check if nose is in a reasonable location in image"""
+    """
+    Check if nose is in a reasonable location in image
+    keypoint: features location
+    w: frame width
+    h: frame hight
+    """
     x, y = keypoint
     return w // 4 < x and x < 3 * w // 4 and 3 * h // 7 < y and y < 6 * h // 7
 
 
 def check_mouth(keypoint, w, h):
-    """Check if mouth is in a reasonable location in image"""
+    """
+    Check if mouth is in a reasonable location in image
+    keypoint: features location
+    w: frame width
+    h: frame hight
+    """
     x, y = keypoint
     return w // 4 < x and x < 3 * w // 4 and h // 2 < y and y < 9 * h // 10
 
 
 def angle_transform(pair, angle):
-    """Transform a point(x, y) to a new point rotated by an angle"""
+    """
+    Transform a point(x, y) to a new point rotated by an angle
+    pair: x,y point
+    angle: rotation angle
+    """
     x = pair[0] * np.cos(angle * np.pi / 180) - pair[1] * np.sin(angle * np.pi / 180)
     y = pair[0] * np.sin(angle * np.pi / 180) + pair[1] * np.cos(angle * np.pi / 180)
     pair[0] = x
@@ -92,7 +116,13 @@ def enhance_keypoints(face, w, h):
 
 
 def add_transparent_image(background, foreground, x_offset=None, y_offset=None):
-    """Overlay foregorund image onto background. Foreground image must have alpha channel"""
+    """
+    Overlay foreground image onto background. Foreground image must have alpha channel.
+    background: background image
+    foreground: foreground image
+    x_offset: x location offset
+    y_offset: y location offset
+    """
     bg_h, bg_w, bg_channels = background.shape
     fg_h, fg_w, fg_channels = foreground.shape
 
@@ -142,7 +172,11 @@ def add_transparent_image(background, foreground, x_offset=None, y_offset=None):
 
 
 def render_filter_0(img, dp=None):
-    """Render facial features"""
+    """
+    Renders found facial features
+    img: image frame to render the filter on
+    dp: the last valid keypoints if available
+    """
     img_grey = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     faces = face_cascade.detectMultiScale(img_grey, 1.3, 5)
     if len(faces) == 0:
@@ -210,7 +244,11 @@ def render_filter_0(img, dp=None):
 
 
 def render_filter_1(img, dp=None):
-    """Render glasses"""
+    """
+    Renders  glasses
+    img: image frame to render the filter on
+    dp: the last valid keypoints if available
+    """
     img_grey = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     faces = face_cascade.detectMultiScale(img_grey, 1.3, 5)
     if len(faces) == 0:
@@ -231,7 +269,11 @@ def render_filter_1(img, dp=None):
 
 
 def render_filter_2(img, dp=None):
-    """Render clown face"""
+    """
+    Renders a clown face
+    img: image frame to render the filter on
+    dp: the last valid keypoints if available
+    """
     img_grey = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     faces = face_cascade.detectMultiScale(img_grey, 1.3, 5)
     if len(faces) == 0:
@@ -260,7 +302,11 @@ def render_filter_2(img, dp=None):
 
 
 def render_filter_3(img, dp=None):
-    """Render face mask"""
+    """
+    Renders a face mask
+    img: image frame to render the filter on
+    dp: the last valid keypoints if available
+    """
     img_grey = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     faces = face_cascade.detectMultiScale(img_grey, 1.3, 5)
     if len(faces) == 0:
@@ -281,7 +327,12 @@ def render_filter_3(img, dp=None):
 
 
 def K_means(hist, No_of_groups=10):
-    # Initialize Cetroids by dividing the range of histogram to equal size Clusters
+    """
+    Calculate K-Means for an image
+    hist: image histogram
+    No_of_groups: number of clusters
+    """
+    # Initialize Centroids by dividing the range of histogram to equal size Clusters
     step = int(len(hist) / No_of_groups)
     dum = [i for i in range(0, len(hist) + 1, step)]
     old_centroids = np.array(dum)
@@ -311,6 +362,10 @@ def K_means(hist, No_of_groups=10):
 
 
 def cartoonize(img):
+    """
+    Takes an image as an input and returns a cartoonish filter on the face
+    img: input frame to render the filter on
+    """
     img_grey = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     faces = face_cascade.detectMultiScale(img_grey, 1.3, 5)
     if len(faces) == 0:
@@ -377,3 +432,6 @@ def cartoonize(img):
 
     img[(rr + ox), (cc + oy), :] = img_cartoon[rr, cc, :]
     return img
+
+
+# EOF
