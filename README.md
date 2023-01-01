@@ -59,7 +59,7 @@ To train
 cd ViolaJones
 python train.py
 ```
-
+ 
 Testing and results are in main.ipynb
 
 ## Results
