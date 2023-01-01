@@ -57,3 +57,4 @@ def non_maximum_supression( regions , half_window , threshold=0.5):
     # return only the bounding boxes that were picked using the integer data type
     return boxes[pick].astype("int")
 
+
