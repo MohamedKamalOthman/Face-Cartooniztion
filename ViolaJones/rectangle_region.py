@@ -1,4 +1,6 @@
 # Renaming RectangleRegion to RectangleWindow
+#start
+
 class RectangleWindow:
     # x coordinate of the start position of the region
     # y coordinate of the start position of the region

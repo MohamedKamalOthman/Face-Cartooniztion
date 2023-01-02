@@ -3,6 +3,7 @@ import pickle
 from AdaBoost import AdaBoost
 from haar_utils import *
 
+#start
 
 class ViolaJones:
     def __init__(self, layers, featurespath) -> None:

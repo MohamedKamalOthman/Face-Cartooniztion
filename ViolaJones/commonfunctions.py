@@ -19,6 +19,7 @@ import numpy as np
 # Edges
 from skimage.filters import sobel_h, sobel, sobel_v, roberts, prewitt
 
+#start
 
 # Show the histogram of a given image
 def show_histogram(img):

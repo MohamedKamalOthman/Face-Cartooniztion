@@ -4,6 +4,7 @@ import cv2
 from haar_utils import *
 import imutils
 
+#start
 
 ## to draw boxes in the original image
 def render_boxes(image, regions) -> Image.Image:

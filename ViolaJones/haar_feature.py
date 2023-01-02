@@ -9,6 +9,8 @@ class HaarFeature:
         each haar feature is divided into 2 symmetric regions: black and white,
         the sub of the black - white regions is the value of this haar feature
         """
+        #start
+
         # to get the white region value
         white_positive_region_sum = sum(
             [
