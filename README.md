@@ -1,4 +1,4 @@
-# Face-Cartoniztion
+# Face-Cartooniztion
 
 This project is about creating a real time application that applies cartooning filters on faces a similar idea to `snapchat`.
 
@@ -68,6 +68,6 @@ Testing and results are in main.ipynb
 
 ## Contributors
 
-<a href = "https://github.com/MohamedKamalOthman/Face-Cartoniztion/graphs/contributors">
-  <img src = "https://contrib.rocks/image?repo=MohamedKamalOthman/Face-Cartoniztion"/>
+<a href = "https://github.com/MohamedKamalOthman/Face-Cartooniztion/graphs/contributors">
+  <img src = "https://contrib.rocks/image?repo=MohamedKamalOthman/Face-Cartooniztion"/>
 </a>
