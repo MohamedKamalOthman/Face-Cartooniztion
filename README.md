@@ -71,3 +71,4 @@ Testing and results are in main.ipynb
 <a href = "https://github.com/MohamedKamalOthman/Face-Cartooniztion/graphs/contributors">
   <img src = "https://contrib.rocks/image?repo=MohamedKamalOthman/Face-Cartooniztion"/>
 </a>
+ 
